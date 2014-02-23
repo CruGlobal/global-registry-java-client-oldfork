@@ -4,12 +4,14 @@ import com.google.common.collect.Sets;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.cru.globalreg.client.EntityEndpoints;
+import org.jboss.resteasy.client.ClientResponse;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 
@@ -32,6 +34,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
+                .accept(MediaType.APPLICATION_JSON)
                 .get();
 
         return handleResponse(response);
@@ -90,7 +93,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         {
             try
             {
-                return new ObjectMapper().readTree(response.getEntity().toString());
+                return new ObjectMapper().readTree(response.readEntity(String.class));
             }
             catch(Exception e)
             {
