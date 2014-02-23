@@ -64,7 +64,7 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>3.0.6.Final</version>
+            <version>3.0.4.Final</version>
         </dependency>
 
 		<!-- Import the APIs that we depend on and are included in JBoss AS 7 -->
