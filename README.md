@@ -1,7 +1,7 @@
 global-registry-java-client
 ===========================
 
-To create this client on your machine:
+##### To create this client on your machine:
 
 Requirements:
  - java and maven installed
@@ -14,7 +14,7 @@ Library will be created at
 
 
 
-To include this client in your project, add this dependency in your pom.xml file
+#####To include this client in your project, add this dependency in your pom.xml file
 
 Requirements:
  - must be connected to Cru's VPN
@@ -26,5 +26,6 @@ Requirements:
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
-
-TODOs: see issue log.
+##### Other notes
+ - Entity PUT, POST & DELETE are untested b/c I wasn't sure about safely testing in a "production" environment. Expect tests soon
+ - Other TODOs: see issue log.
