@@ -74,7 +74,6 @@
             <scope>provided</scope>
         </dependency>
 
-
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
@@ -120,18 +119,6 @@
 			<artifactId>jboss-annotations-api_1.1_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-        <dependency>
-            <groupId>org.ccci</groupId>
-            <artifactId>util</artifactId>
-            <version>3-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ccci</groupId>
-            <artifactId>red-egg</artifactId>
-            <version>1-SNAPSHOT</version>
-        </dependency>
 
     </dependencies>
 	
