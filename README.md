@@ -5,10 +5,12 @@ To create this client on your machine:
 
 Requirements:
  - java and maven installed
- - must be connected to Cru's VPN
 
 Run:
  `mvn clean package`
+ 
+Library will be created at
+ - {project_dir}/target/global-registry-client.jar
 
 
 
