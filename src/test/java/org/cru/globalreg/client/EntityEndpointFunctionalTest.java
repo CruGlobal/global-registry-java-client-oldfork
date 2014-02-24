@@ -1,9 +1,13 @@
 package org.cru.globalreg.client;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.cru.globalreg.client.impl.EntityEndpointsImpl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 /**
  * Created by ryancarlson on 2/23/14.
@@ -12,15 +16,99 @@ import org.testng.annotations.Test;
 public class EntityEndpointFunctionalTest
 {
 
+    static final String ACCESS_TOKEN = "";
     @Test
     public void testGetEndpoint()
     {
         EntityEndpoints entityApi = new EntityEndpointsImpl();
 
-        JsonNode json = entityApi.get("20992", "person", "");
+        JsonNode json = entityApi.get(20992, "person", ACCESS_TOKEN);
 
         Assert.assertNotNull(json);
 
         Assert.assertEquals(json.path("person").path("first_name").getTextValue(), "Michele");
+    }
+
+    @Test
+    public void testPostEndpoint() throws IOException
+    {
+        EntityEndpoints entityApi = new EntityEndpointsImpl();
+
+        JsonNode json = getTestJson();
+
+        JsonNode responseJson = entityApi.create(json, "person", ACCESS_TOKEN);
+
+        try
+        {
+            Assert.assertNotNull(responseJson);
+
+            //logging to the console in case an assertion fails and manual data clean up is needed
+            System.out.println(responseJson.toString());
+
+            Assert.assertEquals(responseJson.path("person").path("first_name").getTextValue(), "Ryan");
+            Assert.assertEquals(responseJson.path("person").path("last_name").getTextValue(), "TestUser Carlson");
+            Assert.assertEquals(responseJson.path("person").path("campus").getTextValue(), "Ohio University");
+            Assert.assertNotNull(responseJson.path("person").path("id").getIntValue());
+        }
+        finally
+        {
+            entityApi.delete(responseJson.path("person").path("id").getIntValue(), "person", ACCESS_TOKEN);
+        }
+    }
+
+    @Test
+    public void testPutEndpoint() throws IOException
+    {
+
+        EntityEndpoints entityApi = new EntityEndpointsImpl();
+
+        /*get some JSON that we'll POST to ensure it's there, if it already exists,
+        the API will just updated it, thankfully not creating a dupe*/
+        JsonNode json = getTestJson();
+
+        JsonNode responseJson = entityApi.create(json, "person", ACCESS_TOKEN);
+
+        try
+        {
+            /*get the same JSON, but provide a new campus name*/
+            JsonNode updateJson = getTestJson();
+            ((ObjectNode)updateJson.path("entity").path("person")).put("campus", "Bowling Green");
+
+            /*execute the update*/
+            int currentId = responseJson.path("person").path("id").getIntValue();
+            JsonNode updateResponseJson = entityApi.update(currentId, responseJson, "person", ACCESS_TOKEN);
+
+            Assert.assertNotNull(updateResponseJson);
+
+            //logging to the console in case an assertion fails and manual data clean up is needed
+            System.out.println(updateResponseJson.toString());
+
+            Assert.assertEquals(updateResponseJson.path("person").path("first_name").getTextValue(), "Ryan");
+            Assert.assertEquals(updateResponseJson.path("person").path("last_name").getTextValue(), "TestUser Carlson");
+            Assert.assertEquals(updateResponseJson.path("person").path("campus").getTextValue(), "Bowling Green");
+            Assert.assertEquals(updateResponseJson.path("person").path("id").getIntValue(), currentId);
+        }
+        finally
+        {
+            entityApi.delete(responseJson.path("person").path("id").getIntValue(), "person", ACCESS_TOKEN);
+        }
+
+    }
+
+    @Test
+    public void testDeleteEndpoint()
+    {
+        /*do nothing... this endpoint is implied to work
+        if the tests above don't fail while doing clean-up
+        */
+    }
+
+
+    private JsonNode getTestJson() throws IOException
+    {
+        return new ObjectMapper().readTree(
+                Thread.currentThread()
+                        .getContextClassLoader()
+                        .getResource("testPost.json"));
     }
 }

@@ -7,8 +7,8 @@ import org.codehaus.jackson.JsonNode;
  */
 public interface EntityEndpoints
 {
-    JsonNode get(String id, String type, String accessToken);
+    JsonNode get(Integer id, String type, String accessToken);
     JsonNode create(JsonNode entity, String type, String accessToken);
-    JsonNode update(JsonNode entity, String type, String accessToken);
-    JsonNode delete(JsonNode entity, String type, String accessToken);
+    JsonNode update(Integer id, JsonNode entity, String type, String accessToken);
+    JsonNode delete(Integer id, String type, String accessToken);
 }

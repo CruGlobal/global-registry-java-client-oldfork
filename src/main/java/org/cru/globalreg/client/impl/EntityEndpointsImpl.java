@@ -27,7 +27,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     final private static Set<Integer> statusWithoutEntity = Sets.newHashSet(204);
 
     @Override
-    public JsonNode get(String id, String type, String accessToken)
+    public JsonNode get(Integer id, String type, String accessToken)
     {
         Response response = webTarget()
                 .path("/" + id)
@@ -53,9 +53,10 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public JsonNode update(JsonNode entity, String type, String accessToken)
+    public JsonNode update(Integer id, JsonNode entity, String type, String accessToken)
     {
         Response response = webTarget()
+                .path("/" + id)
                 .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
@@ -65,9 +66,10 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public JsonNode delete(JsonNode entity, String type, String accessToken)
+    public JsonNode delete(Integer id, String type, String accessToken)
     {
         Response response = webTarget()
+                .path("/" + id)
                 .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
