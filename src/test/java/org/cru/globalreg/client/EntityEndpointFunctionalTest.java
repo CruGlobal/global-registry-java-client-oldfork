@@ -16,7 +16,7 @@ import java.io.IOException;
 public class EntityEndpointFunctionalTest
 {
 
-    static final String ACCESS_TOKEN = "";
+    static final String ACCESS_TOKEN = "zATBSYVCS_PCEnKFq-OmuaLyECW5ULQUUp9zFmDDgr8";
     @Test
     public void testGetEndpoint()
     {
@@ -76,7 +76,7 @@ public class EntityEndpointFunctionalTest
 
             /*execute the update*/
             int currentId = responseJson.path("person").path("id").getIntValue();
-            JsonNode updateResponseJson = entityApi.update(currentId, responseJson, "person", ACCESS_TOKEN);
+            JsonNode updateResponseJson = entityApi.update(currentId, updateJson, "person", ACCESS_TOKEN);
 
             Assert.assertNotNull(updateResponseJson);
 
