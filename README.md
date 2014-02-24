@@ -27,5 +27,5 @@ Requirements:
 </dependency>
 ```
 ##### Other notes
- - Entity PUT, POST & DELETE are untested b/c I wasn't sure about safely testing in a "production" environment. Expect tests soon
+ - Entity PUT test is failing due to a 400 response.  Awaiting server logs for further analysis
  - Other TODOs: see issue log.
