@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class EntityEndpointFunctionalTest
 {
-    static final String ACCESS_TOKEN = "zATBSYVCS_PCEnKFq-OmuaLyECW5ULQUUp9zFmDDgr8";
+    static final String ACCESS_TOKEN = "";
 
     private EntityEndpoints getApi() {
         final EntityEndpointsImpl api = new EntityEndpointsImpl();
