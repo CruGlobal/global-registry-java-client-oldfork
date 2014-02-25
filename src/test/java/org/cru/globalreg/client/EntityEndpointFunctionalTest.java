@@ -15,14 +15,20 @@ import java.io.IOException;
 
 public class EntityEndpointFunctionalTest
 {
-
     static final String ACCESS_TOKEN = "zATBSYVCS_PCEnKFq-OmuaLyECW5ULQUUp9zFmDDgr8";
+
+    private EntityEndpoints getApi() {
+        final EntityEndpointsImpl api = new EntityEndpointsImpl();
+        api.setAccessToken(ACCESS_TOKEN);
+        return api;
+    }
+
     @Test
     public void testGetEndpoint()
     {
-        EntityEndpoints entityApi = new EntityEndpointsImpl();
+        EntityEndpoints entityApi = this.getApi();
 
-        JsonNode json = entityApi.get(20992, "person", ACCESS_TOKEN);
+        JsonNode json = entityApi.get(20992, "person");
 
         Assert.assertNotNull(json);
 
@@ -32,11 +38,11 @@ public class EntityEndpointFunctionalTest
     @Test
     public void testPostEndpoint() throws IOException
     {
-        EntityEndpoints entityApi = new EntityEndpointsImpl();
+        EntityEndpoints entityApi = this.getApi();
 
         JsonNode json = getTestJson();
 
-        JsonNode responseJson = entityApi.create(json, "person", ACCESS_TOKEN);
+        JsonNode responseJson = entityApi.create(json, "person");
 
         try
         {
@@ -52,21 +58,20 @@ public class EntityEndpointFunctionalTest
         }
         finally
         {
-            entityApi.delete(responseJson.path("person").path("id").getIntValue(), "person", ACCESS_TOKEN);
+            entityApi.delete(responseJson.path("person").path("id").getIntValue(), "person");
         }
     }
 
     @Test
     public void testPutEndpoint() throws IOException
     {
-
-        EntityEndpoints entityApi = new EntityEndpointsImpl();
+        EntityEndpoints entityApi = this.getApi();
 
         /*get some JSON that we'll POST to ensure it's there, if it already exists,
         the API will just updated it, thankfully not creating a dupe*/
         JsonNode json = getTestJson();
 
-        JsonNode responseJson = entityApi.create(json, "person", ACCESS_TOKEN);
+        JsonNode responseJson = entityApi.create(json, "person");
 
         try
         {
@@ -76,7 +81,7 @@ public class EntityEndpointFunctionalTest
 
             /*execute the update*/
             int currentId = responseJson.path("person").path("id").getIntValue();
-            JsonNode updateResponseJson = entityApi.update(currentId, updateJson, "person", ACCESS_TOKEN);
+            JsonNode updateResponseJson = entityApi.update(currentId, updateJson, "person");
 
             Assert.assertNotNull(updateResponseJson);
 
@@ -90,7 +95,7 @@ public class EntityEndpointFunctionalTest
         }
         finally
         {
-            entityApi.delete(responseJson.path("person").path("id").getIntValue(), "person", ACCESS_TOKEN);
+            entityApi.delete(responseJson.path("person").path("id").getIntValue(), "person");
         }
 
     }

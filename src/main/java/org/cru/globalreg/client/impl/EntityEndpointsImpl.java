@@ -1,10 +1,6 @@
 package org.cru.globalreg.client.impl;
 
-import com.google.common.collect.Sets;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.cru.globalreg.client.EntityEndpoints;
-import org.jboss.resteasy.client.ClientResponse;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -13,7 +9,12 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Set;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.cru.globalreg.client.EntityEndpoints;
+
+import com.google.common.collect.Sets;
 
 /**
  * Created by ryancarlson on 2/23/14.
@@ -22,12 +23,21 @@ public class EntityEndpointsImpl implements EntityEndpoints
 {
     //TODO: this should be read/injected from default.properties
     private String apiUrl = new String("https://api.leadingwithinformation.com/entities");
+    private String accessToken;
 
     final private static Set<Integer> statusesWithEntity  = Sets.newHashSet(200,201);
     final private static Set<Integer> statusWithoutEntity = Sets.newHashSet(204);
 
+    public final void setApiUrl(final String apiUrl) {
+        this.apiUrl = apiUrl;
+    }
+
+    public final void setAccessToken(final String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     @Override
-    public JsonNode get(Integer id, String type, String accessToken)
+    public JsonNode get(Integer id, String type)
     {
         Response response = webTarget()
                 .path("/" + id)
@@ -41,7 +51,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public JsonNode create(JsonNode entity, String type, String accessToken)
+    public JsonNode create(JsonNode entity, String type)
     {
         Response response = webTarget()
                 .queryParam("entity_type", type)
@@ -53,7 +63,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public JsonNode update(Integer id, JsonNode entity, String type, String accessToken)
+    public JsonNode update(Integer id, JsonNode entity, String type)
     {
         Response response = webTarget()
                 .path("/" + id)
@@ -66,7 +76,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public JsonNode delete(Integer id, String type, String accessToken)
+    public JsonNode delete(Integer id, String type)
     {
         Response response = webTarget()
                 .path("/" + id)
