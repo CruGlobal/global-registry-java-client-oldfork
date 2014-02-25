@@ -26,6 +26,3 @@ Requirements:
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
-##### Other notes
- - Entity PUT test is failing due to a 400 response.  Awaiting server logs for further analysis
- - Other TODOs: see issue log.
