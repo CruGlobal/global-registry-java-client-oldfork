@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.cru.globalreg.client.EntityEndpoints;
@@ -36,6 +37,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.setPropertyNamingStrategy(new GlobalRegistryApiNamingStrategy());
+        this.objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public final void setApiUrl(final String apiUrl)
@@ -49,13 +51,13 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public <T> EntitySearchResponse<T> search(Class<T> entityType, String type, final Filter... filters)
+    public <T> EntitySearchResponse<T> search(EntityClass<T> entityClass, String type, final Filter... filters)
     {
-        return this.search(entityType, type, 1, filters);
+        return this.search(entityClass, type, 1, filters);
     }
 
     @Override
-    public <T> EntitySearchResponse<T> search(Class<T> entityType, String type, int page, final Filter... filters)
+    public <T> EntitySearchResponse<T> search(EntityClass<T> entityClass, String type, int page, final Filter... filters)
     {
         WebTarget target = webTarget()
                 .queryParam("access_token", accessToken)
@@ -73,11 +75,11 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .accept(MediaType.APPLICATION_JSON)
                 .get();
 
-        return handleSearchResponse(response, (Class<T>) entityType);
+        return handleSearchResponse(response, entityClass);
     }
 
     @Override
-    public  <T> T get(Class<T> entityType, Integer id, String type)
+    public  <T> T get(EntityClass<T> entityClass, Integer id, String type)
     {
         Response response = webTarget()
                 .path("/" + id)
@@ -87,32 +89,32 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .accept(MediaType.APPLICATION_JSON)
                 .get();
 
-        return handleResponse(response, (Class<T>) entityType);
+        return handleResponse(response, entityClass);
     }
 
     @Override
-    public  <T> T create(T entity, String type)
+    public  <T> T create(EntityData<T> entityData, String type)
     {
         Response response = webTarget()
                 .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
-                .post(Entity.json(prepareData(entity)));
+                .post(Entity.json(prepareData(entityData.getData())));
 
-       return  handleResponse(response, (Class<T>)entity.getClass());
+       return  handleResponse(response, entityData);
     }
 
     @Override
-    public  <T> T update(T entity, Integer id, String type)
+    public  <T> T update(EntityData<T> entityData, Integer id, String type)
     {
         Response response = webTarget()
                 .path("/" + id)
                 .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
-                .put(Entity.json(prepareData(entity)));
+                .put(Entity.json(prepareData(entityData.getData())));
 
-        return handleResponse(response, (Class<T>)entity.getClass());
+        return handleResponse(response, entityData);
     }
 
     @Override
@@ -151,8 +153,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         return wrappedJsonData;
     }
 
-
-    private <T> T handleResponse(Response response, Class<T> entityType)
+    private <T> T handleResponse(Response response, EntityClass<T> entityClass)
     {
         handleErrorResponses(response);
 
@@ -160,8 +161,8 @@ public class EntityEndpointsImpl implements EntityEndpoints
         {
             try
             {
-                JsonNode jsonNode = objectMapper.readTree(response.readEntity(String.class));
-                return objectMapper.readValue(jsonNode, entityType);
+                JsonNode data = objectMapper.readTree(response.readEntity(String.class));
+                return objectMapper.treeToValue(data, entityClass.getType());
 
             }
             catch(Exception e)
@@ -179,7 +180,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
 
-    private <T> EntitySearchResponse<T> handleSearchResponse(Response response, Class<T> entityType)
+    private <T> EntitySearchResponse<T> handleSearchResponse(Response response, EntityClass<T> entityClass)
     {
         handleErrorResponses(response);
 
@@ -193,7 +194,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
 
                 for(JsonNode result : jsonNode.path("entities"))
                 {
-                    searchResults.getResults().add(objectMapper.readValue(result, entityType));
+                    searchResults.getResults().add(objectMapper.readValue(result, entityClass.getType()));
                 }
 
                 searchResults.setMeta(objectMapper.treeToValue(jsonNode.path("meta"), MetaResults.class));

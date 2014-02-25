@@ -2,6 +2,8 @@ package org.cru.globalreg.client;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.cru.globalreg.client.impl.EntityClass;
+import org.cru.globalreg.client.impl.EntityData;
 import org.cru.globalreg.client.impl.EntityEndpointsImpl;
 import org.cru.globalreg.client.impl.EntitySearchResponse;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
@@ -16,7 +18,7 @@ import java.io.IOException;
 
 public class EntityEndpointFunctionalTest
 {
-    static final String ACCESS_TOKEN = "zATBSYVCS_PCEnKFq-OmuaLyECW5ULQUUp9zFmDDgr8";
+    static final String ACCESS_TOKEN = "";
 
     private EntityEndpoints getApi()
     {
@@ -30,7 +32,7 @@ public class EntityEndpointFunctionalTest
     {
         EntityEndpoints entityApi = this.getApi();
 
-        Person entity = entityApi.get(Person.class, 20992, "person");
+        Person entity = entityApi.get(new EntityClass<Person>(Person.class), 20992, "person");
 
         Assert.assertNotNull(entity);
 
@@ -42,7 +44,7 @@ public class EntityEndpointFunctionalTest
     {
         EntityEndpoints entityApi = this.getApi();
 
-        EntitySearchResponse<PersonData> response = entityApi.search(PersonData.class, "person", new Filter("filters[first_name]", "Michele"));
+        EntitySearchResponse<PersonData> response = entityApi.search(new EntityClass<PersonData>(PersonData.class), "person", new Filter("filters[first_name]", "Michele"));
 
         Assert.assertNotNull(response);
 
@@ -56,7 +58,7 @@ public class EntityEndpointFunctionalTest
 
         Person testData = getTestJson();
 
-        Person postResponseData = entityApi.create(testData, "person");
+        Person postResponseData = entityApi.create(new EntityData<Person>(Person.class, testData), "person");
 
         try
         {
@@ -82,7 +84,7 @@ public class EntityEndpointFunctionalTest
         the API will just updated it, thankfully not creating a dupe*/
         Person testData = getTestJson();
 
-        Person postResponseData = entityApi.create(testData, "person");
+        Person postResponseData = entityApi.create(new EntityData<Person>(Person.class, testData), "person");
 
         try
         {
@@ -94,7 +96,7 @@ public class EntityEndpointFunctionalTest
             updatedTestData.getPerson().setId(currentId);
             /*execute the update*/
 
-            Person putResponseData = entityApi.update(updatedTestData, currentId, "person");
+            Person putResponseData = entityApi.update(new EntityData<Person>(Person.class, updatedTestData), currentId, "person");
 
             Assert.assertNotNull(putResponseData);
 

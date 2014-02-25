@@ -1,5 +1,7 @@
 package org.cru.globalreg.client;
 
+import org.cru.globalreg.client.impl.EntityClass;
+import org.cru.globalreg.client.impl.EntityData;
 import org.cru.globalreg.client.impl.EntitySearchResponse;
 
 /**
@@ -7,10 +9,10 @@ import org.cru.globalreg.client.impl.EntitySearchResponse;
  */
 public interface EntityEndpoints
 {
-    <T> EntitySearchResponse<T> search(Class<T> entityType, String type, Filter... filters);
-    <T> EntitySearchResponse<T> search(Class<T> entityType, String type, int page, Filter... filters);
-    <T> T get(Class<T> entityType, Integer id, String type);
-    <T> T create(T entity, String type);
-    <T> T update(T entity, Integer id, String type);
+    <T> EntitySearchResponse<T> search(EntityClass<T> entityClass, String type, Filter... filters);
+    <T> EntitySearchResponse<T> search(EntityClass<T> entityClass, String type, int page, Filter... filters);
+    <T> T get(EntityClass<T> entityClass, Integer id, String type);
+    <T> T create(EntityData<T> entityData, String type);
+    <T> T update(EntityData<T> entityData, Integer id, String type);
     void delete(Integer id, String type);
 }
