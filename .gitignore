@@ -2,3 +2,8 @@ target/**
 *.iml
 .idea/**.*
 .idea/**
+
+# eclipse editor meta-data
+.classpath
+.project
+.settings
