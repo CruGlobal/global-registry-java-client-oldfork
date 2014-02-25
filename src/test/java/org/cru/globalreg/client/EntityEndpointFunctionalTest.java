@@ -36,6 +36,17 @@ public class EntityEndpointFunctionalTest
     }
 
     @Test
+    public void testSearchEndpoint() {
+        EntityEndpoints entityApi = this.getApi();
+
+        JsonNode json = entityApi.search("person", new Filter("filters[first_name]", "Michele"));
+
+        Assert.assertNotNull(json);
+
+        Assert.assertEquals(json.path("entities").path(0).path("first_name").getTextValue(), "Michele");
+    }
+
+    @Test
     public void testPostEndpoint() throws IOException
     {
         EntityEndpoints entityApi = this.getApi();

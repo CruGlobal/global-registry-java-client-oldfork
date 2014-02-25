@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.cru.globalreg.client.EntityEndpoints;
+import org.cru.globalreg.client.Filter;
 
 import com.google.common.collect.Sets;
 
@@ -34,6 +35,26 @@ public class EntityEndpointsImpl implements EntityEndpoints
 
     public final void setAccessToken(final String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    @Override
+    public JsonNode search(String type, final Filter... filters) {
+        return this.search(type, 1, filters);
+    }
+
+    @Override
+    public JsonNode search(String type, int page, final Filter... filters) {
+        WebTarget target = webTarget().queryParam("access_token", accessToken).queryParam("entity_type", type)
+                .queryParam("page", page);
+
+        // set the filters on the target
+        for (final Filter filter : filters) {
+            target = target.queryParam(filter.getField(), filter.getValue());
+        }
+
+        Response response = target.request().accept(MediaType.APPLICATION_JSON).get();
+
+        return handleResponse(response);
     }
 
     @Override
