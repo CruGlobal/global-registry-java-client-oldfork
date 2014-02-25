@@ -1,6 +1,4 @@
-package org.cru.globalreg.client.impl;
-
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+package org.cru.globalreg.client.entity;
 
 /**
  * Created by ryancarlson on 2/25/14.

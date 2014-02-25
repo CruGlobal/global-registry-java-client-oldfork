@@ -1,8 +1,6 @@
-package org.cru.globalreg.client;
+package org.cru.globalreg.client.entity;
 
-import org.cru.globalreg.client.impl.EntityClass;
-import org.cru.globalreg.client.impl.EntityData;
-import org.cru.globalreg.client.impl.EntitySearchResponse;
+import org.cru.globalreg.client.Filter;
 
 /**
  * Created by ryancarlson on 2/23/14.

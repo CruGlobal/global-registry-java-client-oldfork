@@ -1,4 +1,4 @@
-package org.cru.globalreg.client.impl;
+package org.cru.globalreg.client.entity;
 
 import com.beust.jcommander.internal.Lists;
 

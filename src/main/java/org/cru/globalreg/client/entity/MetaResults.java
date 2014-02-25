@@ -1,4 +1,4 @@
-package org.cru.globalreg.client.impl;
+package org.cru.globalreg.client.entity;
 
 /**
  * Created by ryancarlson on 2/25/14.

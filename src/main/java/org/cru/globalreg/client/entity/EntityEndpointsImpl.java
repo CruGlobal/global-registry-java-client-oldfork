@@ -1,4 +1,4 @@
-package org.cru.globalreg.client.impl;
+package org.cru.globalreg.client.entity;
 
 import java.util.Set;
 
@@ -14,7 +14,6 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.cru.globalreg.client.EntityEndpoints;
 import org.cru.globalreg.client.Filter;
 
 import com.google.common.collect.Sets;

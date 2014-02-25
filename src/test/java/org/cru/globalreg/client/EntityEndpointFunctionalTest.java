@@ -2,10 +2,11 @@ package org.cru.globalreg.client;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.cru.globalreg.client.impl.EntityClass;
-import org.cru.globalreg.client.impl.EntityData;
-import org.cru.globalreg.client.impl.EntityEndpointsImpl;
-import org.cru.globalreg.client.impl.EntitySearchResponse;
+import org.cru.globalreg.client.entity.EntityEndpoints;
+import org.cru.globalreg.client.entity.EntityClass;
+import org.cru.globalreg.client.entity.EntityData;
+import org.cru.globalreg.client.entity.EntityEndpointsImpl;
+import org.cru.globalreg.client.entity.EntitySearchResponse;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
