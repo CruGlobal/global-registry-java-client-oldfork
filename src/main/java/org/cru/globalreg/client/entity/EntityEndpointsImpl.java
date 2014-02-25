@@ -223,7 +223,6 @@ public class EntityEndpointsImpl implements EntityEndpoints
         else throw new IllegalStateException("Unexpected status: " + response.getStatus() + " was returned.");
     }
 
-
     private <T> T convertJson(final JsonNode json, EntityClass<T> entityClass)
     {
         try

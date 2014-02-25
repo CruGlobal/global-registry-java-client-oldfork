@@ -1,13 +1,28 @@
 package org.cru.globalreg.client.entitytypes;
 
+import java.util.List;
+
 /**
  * Created by ryancarlson on 2/25/14.
  */
 public class EntityType
 {
+    private Integer id;
     private String name;
     private String fieldType;
     private String parentId;
+
+    private List<EntityType> fields;
+
+    public Integer getId()
+    {
+        return id;
+    }
+
+    public void setId(Integer id)
+    {
+        this.id = id;
+    }
 
     public String getName()
     {
@@ -37,5 +52,15 @@ public class EntityType
     public void setParentId(String parentId)
     {
         this.parentId = parentId;
+    }
+
+    public List<EntityType> getFields()
+    {
+        return fields;
+    }
+
+    public void setFields(List<EntityType> fields)
+    {
+        this.fields = fields;
     }
 }
