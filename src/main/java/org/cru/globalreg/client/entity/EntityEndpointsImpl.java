@@ -15,9 +15,9 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.cru.globalreg.client.Filter;
+import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 
 import com.google.common.collect.Sets;
-import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 
 /**
  * Created by ryancarlson on 2/23/14.
@@ -66,7 +66,10 @@ public class EntityEndpointsImpl implements EntityEndpoints
         // set the filters on the target
         for (final Filter filter : filters)
         {
-            target = target.queryParam(filter.getField(), filter.getValue());
+            if (filter.isValid())
+            {
+                target = target.queryParam(filter.getFilter(), filter.getValue());
+            }
         }
 
         Response response = target

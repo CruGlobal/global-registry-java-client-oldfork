@@ -45,7 +45,8 @@ public class EntityEndpointFunctionalTest
     {
         EntityEndpoints entityApi = this.getApi();
 
-        EntitySearchResponse<PersonData> response = entityApi.search(new EntityClass<PersonData>(PersonData.class), "person", new Filter("filters[first_name]", "Michele"));
+        EntitySearchResponse<PersonData> response = entityApi.search(new EntityClass<PersonData>(PersonData.class),
+                "person", new Filter().path("first_name").value("Michele"));
 
         Assert.assertNotNull(response);
 
