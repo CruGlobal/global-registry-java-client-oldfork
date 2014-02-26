@@ -1,48 +1,28 @@
 package org.cru.globalreg.jackson;
 
+import com.google.common.base.CaseFormat;
 import org.codehaus.jackson.map.MapperConfig;
 import org.codehaus.jackson.map.PropertyNamingStrategy;
 import org.codehaus.jackson.map.introspect.AnnotatedField;
 import org.codehaus.jackson.map.introspect.AnnotatedMethod;
 
-/**
- * Code derived from source below:
- *
- * Source: http://www.cowtowncoder.com/blog/archives/2011/03/entry_448.html
- */
 public class GlobalRegistryApiNamingStrategy extends PropertyNamingStrategy
 {
     @Override
     public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName)
     {
-        return convert(defaultName);
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, defaultName);
     }
 
     @Override
     public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName)
     {
-        return convert(defaultName);
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, defaultName);
     }
 
     @Override
     public String nameForSetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName)
     {
-        return convert(defaultName);
-    }
-
-    private String convert(String input) {
-        // easy: replace capital letters with underscore, lower-cases equivalent
-        StringBuilder result = new StringBuilder();
-        for (int i = 0, len = input.length(); i < len; ++i)
-        {
-            char c = input.charAt(i);
-            if (Character.isUpperCase(c))
-            {
-                result.append('_');
-                c = Character.toLowerCase(c);
-            }
-            result.append(c);
-        }
-        return result.toString();
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, defaultName);
     }
 }
