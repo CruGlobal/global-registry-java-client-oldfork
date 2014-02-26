@@ -25,7 +25,7 @@ import com.google.common.collect.Sets;
 public class EntityEndpointsImpl implements EntityEndpoints
 {
     //TODO: this should be read/injected from default.properties
-    private String apiUrl = new String("https://api.leadingwithinformation.com");
+    private String apiUrl = new String("http://gr.stage.uscm.org");
     private String accessToken;
     final private ObjectMapper objectMapper;
 
@@ -77,7 +77,19 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .accept(MediaType.APPLICATION_JSON)
                 .get();
 
-        return handleSearchResponse(response, entityClass);
+        final JsonNode json = handleResponse(response);
+        if (json != null) {
+            final EntitySearchResponse<T> searchResults = new EntitySearchResponse<T>();
+            for (final JsonNode entity : json.path("entities")) {
+                searchResults.getResults().add(convertJson(entity.path(type), entityClass));
+            }
+
+            searchResults.setMeta(convertJson(json.path("meta"), new EntityClass<MetaResults>(MetaResults.class)));
+
+            return searchResults;
+        }
+
+        return null;
     }
 
     @Override
@@ -91,19 +103,28 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .accept(MediaType.APPLICATION_JSON)
                 .get();
 
-        return handleResponse(response, entityClass);
+        final JsonNode json = handleResponse(response);
+        if (json != null) {
+            return convertJson(json.path("entity").path(type), entityClass);
+        }
+
+        return null;
     }
 
     @Override
     public  <T> T create(EntityData<T> entityData, String type)
     {
         Response response = webTarget()
-                .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
-                .post(Entity.json(prepareData(entityData.getData())));
+                .post(Entity.json(prepareData(entityData.getData(), type)));
 
-       return  handleResponse(response, entityData);
+        final JsonNode json = handleResponse(response);
+        if (json != null) {
+            return convertJson(json.path("entity").path(type), entityData);
+        }
+
+        return null;
     }
 
     @Override
@@ -111,12 +132,16 @@ public class EntityEndpointsImpl implements EntityEndpoints
     {
         Response response = webTarget()
                 .path("/" + id)
-                .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
-                .put(Entity.json(prepareData(entityData.getData())));
+                .put(Entity.json(prepareData(entityData.getData(), type)));
 
-        return handleResponse(response, entityData);
+        final JsonNode json = handleResponse(response);
+        if (json != null) {
+            return convertJson(json.path("entity").path(type), entityData);
+        }
+
+        return null;
     }
 
     @Override
@@ -124,7 +149,6 @@ public class EntityEndpointsImpl implements EntityEndpoints
     {
         Response response = webTarget()
                 .path("/" + id)
-                .queryParam("entity_type", type)
                 .queryParam("access_token", accessToken)
                 .request()
                 .delete();
@@ -145,17 +169,20 @@ public class EntityEndpointsImpl implements EntityEndpoints
      * @param <T>
      * @return
      */
-    private <T> JsonNode prepareData(T data)
+    private <T> JsonNode prepareData(T data, final String entityType)
     {
         JsonNode jsonData = objectMapper.valueToTree(data);
 
-        ObjectNode wrappedJsonData = objectMapper.createObjectNode();
-        wrappedJsonData.put("entity", jsonData);
+        final ObjectNode entity = objectMapper.createObjectNode();
+        entity.put(entityType, jsonData);
 
-        return wrappedJsonData;
+        final ObjectNode root = objectMapper.createObjectNode();
+        root.put("entity", entity);
+
+        return root;
     }
 
-    private <T> T handleResponse(Response response, EntityClass<T> entityClass)
+    private JsonNode handleResponse(Response response)
     {
         handleErrorResponses(response);
 
@@ -163,9 +190,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         {
             try
             {
-                JsonNode data = objectMapper.readTree(response.readEntity(String.class));
-                return objectMapper.treeToValue(data, entityClass.getType());
-
+                return objectMapper.readTree(response.readEntity(String.class));
             }
             catch(Exception e)
             {
@@ -182,35 +207,12 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
 
-    private <T> EntitySearchResponse<T> handleSearchResponse(Response response, EntityClass<T> entityClass)
-    {
-        handleErrorResponses(response);
-
-        if(response.getStatus() == 200)
-        {
-            try
-            {
-                EntitySearchResponse<T> searchResults = new EntitySearchResponse<T>();
-
-                JsonNode jsonNode = objectMapper.readTree(response.readEntity(String.class));
-
-                for(JsonNode result : jsonNode.path("entities"))
-                {
-                    searchResults.getResults().add(objectMapper.readValue(result, entityClass.getType()));
-                }
-
-                searchResults.setMeta(objectMapper.treeToValue(jsonNode.path("meta"), MetaResults.class));
-
-                return searchResults;
-
-            }
-            catch(Exception e)
-            {
-                throw new WebApplicationException(e, 500);
-            }
+    private <T> T convertJson(final JsonNode json, EntityClass<T> entityClass) {
+        try {
+            return objectMapper.treeToValue(json, entityClass.getType());
+        } catch (final Exception suppressed) {
+            return null;
         }
-
-        else throw new IllegalStateException("Unexpected status: " + response.getStatus() + " was returned.");
     }
 
     private void handleErrorResponses(Response response)

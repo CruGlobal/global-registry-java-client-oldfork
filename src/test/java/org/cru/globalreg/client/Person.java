@@ -8,15 +8,49 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Person
 {
-    PersonData person;
 
-    public PersonData getPerson()
+    private String firstName;
+    private String lastName;
+    private String campus;
+    private Integer id;
+
+    public String getFirstName()
     {
-        return person;
+        return firstName;
     }
 
-    public void setPerson(PersonData person)
+    public void setFirstName(String firstName)
     {
-        this.person = person;
+        this.firstName = firstName;
+    }
+
+    public String getLastName()
+    {
+        return lastName;
+    }
+
+    public void setLastName(String lastName)
+    {
+        this.lastName = lastName;
+    }
+
+    public String getCampus()
+    {
+        return campus;
+    }
+
+    public void setCampus(String campus)
+    {
+        this.campus = campus;
+    }
+
+    public Integer getId()
+    {
+        return id;
+    }
+
+    public void setId(Integer id)
+    {
+        this.id = id;
     }
 }

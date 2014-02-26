@@ -1,17 +1,17 @@
 package org.cru.globalreg.client;
 
+import java.io.IOException;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.cru.globalreg.client.entity.EntityEndpoints;
 import org.cru.globalreg.client.entity.EntityClass;
 import org.cru.globalreg.client.entity.EntityData;
+import org.cru.globalreg.client.entity.EntityEndpoints;
 import org.cru.globalreg.client.entity.EntityEndpointsImpl;
 import org.cru.globalreg.client.entity.EntitySearchResponse;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
 
 /**
  * Created by ryancarlson on 2/23/14.
@@ -33,11 +33,11 @@ public class EntityEndpointFunctionalTest
     {
         EntityEndpoints entityApi = this.getApi();
 
-        Person entity = entityApi.get(new EntityClass<Person>(Person.class), 20992, "person");
+        Person entity = entityApi.get(new EntityClass<Person>(Person.class), 20972, "person");
 
         Assert.assertNotNull(entity);
 
-        Assert.assertEquals(entity.getPerson().getFirstName(), "Michele");
+        Assert.assertEquals(entity.getFirstName(), "Ferson");
     }
 
     @Test
@@ -45,16 +45,16 @@ public class EntityEndpointFunctionalTest
     {
         EntityEndpoints entityApi = this.getApi();
 
-        EntitySearchResponse<PersonData> response = entityApi.search(new EntityClass<PersonData>(PersonData.class),
-                "person", new Filter().path("first_name").value("Michele"));
+        EntitySearchResponse<Person> response = entityApi.search(new EntityClass<Person>(Person.class), "person",
+                new Filter().path("last_name").value("Vellacott"));
 
         Assert.assertNotNull(response);
 
-        Assert.assertEquals(response.getResults().get(0).getFirstName(), "Michele");
+        Assert.assertEquals(response.getResults().get(0).getLastName(), "Vellacott");
     }
 
     @Test
-    public void testPostEndpoint() throws IOException
+    public void testCreateEndpoint() throws IOException
     {
         EntityEndpoints entityApi = this.getApi();
 
@@ -66,19 +66,19 @@ public class EntityEndpointFunctionalTest
         {
             Assert.assertNotNull(postResponseData);
 
-            Assert.assertEquals(postResponseData.getPerson().getFirstName(), "Ryan");
-            Assert.assertEquals(postResponseData.getPerson().getLastName(), "TestUser Carlson");
-            Assert.assertEquals(postResponseData.getPerson().getCampus(), "Ohio University");
-            Assert.assertNotNull(postResponseData.getPerson().getId());
+            Assert.assertEquals(postResponseData.getFirstName(), "Ryan");
+            Assert.assertEquals(postResponseData.getLastName(), "TestUser Carlson");
+            Assert.assertEquals(postResponseData.getCampus(), "Ohio University");
+            Assert.assertNotNull(postResponseData.getId());
         }
         finally
         {
-            entityApi.delete(postResponseData.getPerson().getId(), "person");
+            entityApi.delete(postResponseData.getId(), "person");
         }
     }
 
     @Test
-    public void testPutEndpoint() throws IOException
+    public void testUpdateEndpoint() throws IOException
     {
         EntityEndpoints entityApi = this.getApi();
 
@@ -86,30 +86,32 @@ public class EntityEndpointFunctionalTest
         the API will just updated it, thankfully not creating a dupe*/
         Person testData = getTestJson();
 
-        Person postResponseData = entityApi.create(new EntityData<Person>(Person.class, testData), "person");
+        Person postResponseData = entityApi
+                .create(new EntityData<Person>(Person.class, testData), "person");
 
         try
         {
-            Integer currentId = postResponseData.getPerson().getId();
+            Integer currentId = postResponseData.getId();
 
             /*get the same JSON, but provide a new campus name*/
             Person updatedTestData = getTestJson();
-            updatedTestData.getPerson().setCampus("Bowling Green");
-            updatedTestData.getPerson().setId(currentId);
+            updatedTestData.setCampus("Bowling Green");
+            updatedTestData.setId(currentId);
             /*execute the update*/
 
-            Person putResponseData = entityApi.update(new EntityData<Person>(Person.class, updatedTestData), currentId, "person");
+            Person putResponseData = entityApi.update(
+                    new EntityData<Person>(Person.class, updatedTestData), currentId, "person");
 
             Assert.assertNotNull(putResponseData);
 
-            Assert.assertEquals(putResponseData.getPerson().getFirstName(), "Ryan");
-            Assert.assertEquals(putResponseData.getPerson().getLastName(), "TestUser Carlson");
-            Assert.assertEquals(putResponseData.getPerson().getCampus(), "Bowling Green");
-            Assert.assertEquals(putResponseData.getPerson().getId(), currentId);
+            Assert.assertEquals(putResponseData.getFirstName(), "Ryan");
+            Assert.assertEquals(putResponseData.getLastName(), "TestUser Carlson");
+            Assert.assertEquals(putResponseData.getCampus(), "Bowling Green");
+            Assert.assertEquals(putResponseData.getId(), currentId);
         }
         finally
         {
-            entityApi.delete(postResponseData.getPerson().getId(), "person");
+            entityApi.delete(postResponseData.getId(), "person");
         }
 
     }
@@ -132,6 +134,6 @@ public class EntityEndpointFunctionalTest
         ObjectMapper mapper = new ObjectMapper();
         mapper.setPropertyNamingStrategy(new GlobalRegistryApiNamingStrategy());
 
-        return mapper.readValue(jsonNode, Person.class);
+        return mapper.readValue(jsonNode.path("person"), Person.class);
     }
 }
