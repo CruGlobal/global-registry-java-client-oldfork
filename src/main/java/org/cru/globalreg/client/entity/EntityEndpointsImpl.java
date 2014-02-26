@@ -25,7 +25,7 @@ import com.google.common.collect.Sets;
 public class EntityEndpointsImpl implements EntityEndpoints
 {
     //TODO: this should be read/injected from default.properties
-    private String apiUrl = new String("https://api.leadingwithinformation.com/entities");
+    private String apiUrl = new String("https://api.leadingwithinformation.com");
     private String accessToken;
     final private ObjectMapper objectMapper;
 
@@ -133,7 +133,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     private WebTarget webTarget()
     {
         Client client = ClientBuilder.newBuilder().build();
-        return client.target(apiUrl);
+        return client.target(apiUrl).path("entities");
     }
 
     /**
