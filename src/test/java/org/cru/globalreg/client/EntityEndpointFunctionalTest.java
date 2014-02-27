@@ -50,7 +50,7 @@ public class EntityEndpointFunctionalTest
 
         Assert.assertNotNull(response);
 
-        Assert.assertEquals(response.getResults().get(0).getLastName(), "Vellacott");
+        Assert.assertEquals(response.get(0).getLastName(), "Vellacott");
     }
 
     @Test

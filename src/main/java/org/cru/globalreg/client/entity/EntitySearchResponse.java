@@ -1,25 +1,22 @@
 package org.cru.globalreg.client.entity;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.ForwardingList;
 
 import java.util.List;
 
 /**
  * Created by ryancarlson on 2/25/14.
  */
-public class EntitySearchResponse<T>
+public class EntitySearchResponse<T> extends ForwardingList<T>
 {
     List<T> results = Lists.newArrayList();
     MetaResults meta = new MetaResults();
 
-    public List<T> getResults()
+    @Override
+    protected List<T> delegate()
     {
         return results;
-    }
-
-    public void setResults(List<T> results)
-    {
-        this.results = results;
     }
 
     public MetaResults getMeta()

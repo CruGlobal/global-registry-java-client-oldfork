@@ -10,6 +10,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Throwables;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -77,15 +78,27 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .accept(MediaType.APPLICATION_JSON)
                 .get();
 
+        handleErrorResponses(response);
+
         final JsonNode json = handleResponse(response);
-        if (json != null) {
+
+        if (json != null)
+        {
             final EntitySearchResponse<T> searchResults = new EntitySearchResponse<T>();
-            for (final JsonNode entity : json.path("entities")) {
-                searchResults.getResults().add(convertJson(entity.path(type), entityClass));
+
+            for (final JsonNode entity : json.path("entities"))
+            {
+                searchResults.add(convertJson(entity.path(type), entityClass));
             }
 
-            searchResults.setMeta(convertJson(json.path("meta"), new EntityClass<MetaResults>(MetaResults.class)));
-
+            try
+            {
+                searchResults.setMeta(objectMapper.treeToValue(json.path("meta"), MetaResults.class));
+            }
+            catch(Exception checkedException)
+            {
+                Throwables.propagate(checkedException);
+            }
             return searchResults;
         }
 
@@ -104,7 +117,8 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .get();
 
         final JsonNode json = handleResponse(response);
-        if (json != null) {
+        if (json != null)
+        {
             return convertJson(json.path("entity").path(type), entityClass);
         }
 
@@ -120,7 +134,8 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .post(Entity.json(prepareData(entityData.getData(), type)));
 
         final JsonNode json = handleResponse(response);
-        if (json != null) {
+        if (json != null)
+        {
             return convertJson(json.path("entity").path(type), entityData);
         }
 
@@ -137,7 +152,8 @@ public class EntityEndpointsImpl implements EntityEndpoints
                 .put(Entity.json(prepareData(entityData.getData(), type)));
 
         final JsonNode json = handleResponse(response);
-        if (json != null) {
+        if (json != null)
+        {
             return convertJson(json.path("entity").path(type), entityData);
         }
 
@@ -192,9 +208,10 @@ public class EntityEndpointsImpl implements EntityEndpoints
             {
                 return objectMapper.readTree(response.readEntity(String.class));
             }
-            catch(Exception e)
+            catch(Exception checkedException)
             {
-                throw new WebApplicationException(e, 500);
+                Throwables.propagate(checkedException);
+                return null; /*unreachable*/
             }
         }
 
@@ -207,11 +224,16 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
 
-    private <T> T convertJson(final JsonNode json, EntityClass<T> entityClass) {
-        try {
+    private <T> T convertJson(final JsonNode json, EntityClass<T> entityClass)
+    {
+        try
+        {
             return objectMapper.treeToValue(json, entityClass.getType());
-        } catch (final Exception suppressed) {
-            return null;
+        }
+        catch(Exception checkedException)
+        {
+            Throwables.propagate(checkedException);
+            return null; /*unreachable*/
         }
     }
 
