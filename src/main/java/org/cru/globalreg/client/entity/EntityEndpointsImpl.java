@@ -16,6 +16,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.cru.globalreg.client.Filter;
+import org.cru.globalreg.client.JsonConverter;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 
 import com.google.common.collect.Sets;
@@ -88,7 +89,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
 
             for (final JsonNode entity : json.path("entities"))
             {
-                searchResults.add(convertJson(entity.path(type), entityClass));
+                searchResults.add(JsonConverter.treeToValue(entity.path(type), entityClass.getType()));
             }
 
             try
@@ -119,7 +120,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         final JsonNode json = handleResponse(response);
         if (json != null)
         {
-            return convertJson(json.path("entity").path(type), entityClass);
+            return JsonConverter.treeToValue(json, entityClass.getType(), "entity", type);
         }
 
         return null;
@@ -136,7 +137,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         final JsonNode json = handleResponse(response);
         if (json != null)
         {
-            return convertJson(json.path("entity").path(type), entityData);
+            return JsonConverter.treeToValue(json, entityData.getType(), "entity", type);
         }
 
         return null;
@@ -154,7 +155,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         final JsonNode json = handleResponse(response);
         if (json != null)
         {
-            return convertJson(json.path("entity").path(type), entityData);
+            return JsonConverter.treeToValue(json, entityData.getType(), "entity", type);
         }
 
         return null;
@@ -176,27 +177,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         return client.target(apiUrl).path("entities");
     }
 
-    /**
-     * This method prepares the data for a POST or PUT with two important steps
-     *  1. It converts the POJO fields into underscore field names in the objectMapper.valueToTree call
-     *  2. It wraps the data in an object called "entity" so meet the API requirements
-     *    - this requirement may soon be going away :)
-     * @param data
-     * @param <T>
-     * @return
-     */
-    private <T> JsonNode prepareData(T data, final String entityType)
-    {
-        JsonNode jsonData = objectMapper.valueToTree(data);
 
-        final ObjectNode entity = objectMapper.createObjectNode();
-        entity.put(entityType, jsonData);
-
-        final ObjectNode root = objectMapper.createObjectNode();
-        root.put("entity", entity);
-
-        return root;
-    }
 
     private JsonNode handleResponse(Response response)
     {
@@ -223,18 +204,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         else throw new IllegalStateException("Unexpected status: " + response.getStatus() + " was returned.");
     }
 
-    private <T> T convertJson(final JsonNode json, EntityClass<T> entityClass)
-    {
-        try
-        {
-            return objectMapper.treeToValue(json, entityClass.getType());
-        }
-        catch(Exception checkedException)
-        {
-            Throwables.propagate(checkedException);
-            return null; /*unreachable*/
-        }
-    }
+
 
     private void handleErrorResponses(Response response)
     {
