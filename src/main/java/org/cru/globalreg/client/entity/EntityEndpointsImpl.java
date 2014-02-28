@@ -16,6 +16,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.cru.globalreg.client.Filter;
+import org.cru.globalreg.client.JsonConverter;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 
 import com.google.common.collect.Sets;
@@ -88,7 +89,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
 
             for (final JsonNode entity : json.path("entities"))
             {
-                searchResults.add(convertJson(entity.path(type), entityClass));
+                searchResults.add(JsonConverter.treeToValue(entity.path(type), entityClass.getType()));
             }
 
             try
@@ -119,7 +120,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         final JsonNode json = handleResponse(response);
         if (json != null)
         {
-            return convertJson(json.path("entity").path(type), entityClass);
+            return JsonConverter.treeToValue(json, entityClass.getType(), "entity", type);
         }
 
         return null;
@@ -136,7 +137,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         final JsonNode json = handleResponse(response);
         if (json != null)
         {
-            return convertJson(json.path("entity").path(type), entityData);
+            return JsonConverter.treeToValue(json, entityData.getType(), "entity", type);
         }
 
         return null;
@@ -154,7 +155,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
         final JsonNode json = handleResponse(response);
         if (json != null)
         {
-            return convertJson(json.path("entity").path(type), entityData);
+            return JsonConverter.treeToValue(json, entityData.getType(), "entity", type);
         }
 
         return null;
@@ -185,7 +186,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
      * @param <T>
      * @return
      */
-    private <T> JsonNode prepareData(T data, final String entityType)
+    private <T> JsonNode prepareData(T data, String entityType)
     {
         JsonNode jsonData = objectMapper.valueToTree(data);
 
@@ -224,18 +225,6 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
 
-    private <T> T convertJson(final JsonNode json, EntityClass<T> entityClass)
-    {
-        try
-        {
-            return objectMapper.treeToValue(json, entityClass.getType());
-        }
-        catch(Exception checkedException)
-        {
-            Throwables.propagate(checkedException);
-            return null; /*unreachable*/
-        }
-    }
 
     private void handleErrorResponses(Response response)
     {
