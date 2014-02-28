@@ -1,11 +1,12 @@
 package org.cru.globalreg.client.entitytypes;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.type.TypeReference;
-import org.cru.globalreg.client.entity.EntityClass;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 
 import javax.ws.rs.WebApplicationException;
@@ -22,7 +23,7 @@ import java.util.Set;
  */
 public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
 {
-    private String apiUrl = new String("https://api.leadingwithinformation.com/entity_types");
+    private String apiUrl = new String("http://gr.stage.uscm.org");
     private String accessToken;
     final private ObjectMapper objectMapper;
 
@@ -45,9 +46,12 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
     public List<EntityType> getAll()
     {
         Response response = webTarget()
+                .path("/entity_types")
                 .queryParam("access_token", accessToken)
                 .request()
                 .get();
+
+        handleErrorResponses(response);
 
         try
         {
@@ -56,7 +60,8 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
         }
         catch(Exception e)
         {
-            throw new WebApplicationException(e, 500);
+            Throwables.propagate(e);
+            return null; /*unreachable*/
         }
     }
 
@@ -64,9 +69,12 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
     public EntityType create(EntityType newEntityType)
     {
         Response response = webTarget()
+                .path("/entity_types")
                 .queryParam("access_token", accessToken)
                 .request()
-                .post(Entity.json(newEntityType));
+                .post(Entity.json(prepareData(newEntityType,"entity_type")));
+
+        handleErrorResponses(response);
 
         try
         {
@@ -75,33 +83,9 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
         }
         catch(Exception e)
         {
-            throw new WebApplicationException(e, 500);
+            Throwables.propagate(e);
+            return null; /*unreachable*/
         }
-    }
-
-    private <T> T handleResponse(Response response, EntityClass<T> entityClass)
-    {
-        handleErrorResponses(response);
-
-        if(statusesWithEntity.contains(response.getStatus()))
-        {
-            try
-            {
-                JsonNode data = objectMapper.readTree(response.readEntity(String.class));
-                return objectMapper.treeToValue(data, entityClass.getType());
-            }
-            catch(Exception e)
-            {
-                throw new WebApplicationException(e, 500);
-            }
-        }
-
-        else if(statusWithoutEntity.contains(response.getStatus()))
-        {
-            return null;
-        }
-
-        else throw new IllegalStateException("Unexpected status: " + response.getStatus() + " was returned.");
     }
 
     private WebTarget webTarget()
@@ -116,5 +100,27 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
         {
             throw new WebApplicationException(response);
         }
+    }
+
+    /**
+     * This method prepares the data for a POST or PUT with two important steps
+     *  1. It converts the POJO fields into underscore field names in the objectMapper.valueToTree call
+     *  2. It wraps the data in an object called "entity" so meet the API requirements
+     *    - this requirement may soon be going away :)
+     * @param data
+     * @param <T>
+     * @return
+     */
+    private <T> JsonNode prepareData(T data, String entityType)
+    {
+        JsonNode jsonData = objectMapper.valueToTree(data);
+//
+//        final ObjectNode entity = objectMapper.createObjectNode();
+//        entity.put(entityType, jsonData);
+
+        final ObjectNode root = objectMapper.createObjectNode();
+        root.put("entity_type", jsonData);
+
+        return root;
     }
 }

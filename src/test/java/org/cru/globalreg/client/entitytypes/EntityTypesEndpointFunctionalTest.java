@@ -11,10 +11,12 @@ import java.util.List;
 public class EntityTypesEndpointFunctionalTest
 {
 
+    private final String ACCESS_TOKEN = "";
+
     private EntityTypeEndpoints getApi()
     {
         final EntityTypeEndpointsImpl api = new EntityTypeEndpointsImpl();
-        api.setAccessToken("");
+        api.setAccessToken(ACCESS_TOKEN);
         return api;
     }
 
@@ -32,12 +34,22 @@ public class EntityTypesEndpointFunctionalTest
     @Test
     public void testCreateEndpoint()
     {
-        /*without a delete function, not sure i want to test this in production*/
-//        EntityTypeEndpoints entityTypesApi = this.getApi();
-//
-//        EntityType createdEntityTypeResult = entityTypesApi.create(null);
-//
-//        Assert.assertNotNull(createdEntityTypeResult);
+        EntityTypeEndpoints entityTypesApi = this.getApi();
+
+        EntityType createdEntityTypeResult = entityTypesApi.create(testEntityType());
+
+        Assert.assertNotNull(createdEntityTypeResult);
     }
 
+    private EntityType  testEntityType()
+    {
+        EntityType entityType;
+
+        entityType = new EntityType();
+        entityType.setName("favorite_food");
+        entityType.setFieldType("string");
+        entityType.setParentId(1);
+
+        return entityType;
+    }
 }

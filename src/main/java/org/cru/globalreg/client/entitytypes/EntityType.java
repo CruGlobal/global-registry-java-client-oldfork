@@ -10,7 +10,7 @@ public class EntityType
     private Integer id;
     private String name;
     private String fieldType;
-    private String parentId;
+    private Integer parentId;
 
     private List<EntityType> fields;
 
@@ -44,12 +44,12 @@ public class EntityType
         this.fieldType = fieldType;
     }
 
-    public String getParentId()
+    public Integer getParentId()
     {
         return parentId;
     }
 
-    public void setParentId(String parentId)
+    public void setParentId(Integer parentId)
     {
         this.parentId = parentId;
     }

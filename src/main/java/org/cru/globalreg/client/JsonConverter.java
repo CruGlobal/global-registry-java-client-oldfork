@@ -37,30 +37,6 @@ public class JsonConverter
         }
     }
 
-    /**
-     * This method prepares the data for a POST or PUT with two important steps
-     *  1. It converts the POJO fields into underscore field names in the objectMapper.valueToTree call
-     *  2. It wraps the data in an object called "entity" so meet the API requirements
-     *    - this requirement may soon be going away :)
-     * @param data
-     * @param <T>
-     * @return
-     */
-    private <T> JsonNode prepareData(T data, String[] path)
-    {
-        ObjectMapper objectMapper = createObjectMapper();
-
-        JsonNode jsonData = objectMapper.valueToTree(data);
-
-        final ObjectNode entity = objectMapper.createObjectNode();
-        entity.put(entityType, jsonData);
-
-        final ObjectNode root = objectMapper.createObjectNode();
-        root.put("entity", entity);
-
-        return root;
-    }
-
     private static ObjectMapper createObjectMapper()
     {
         ObjectMapper objectMapper = new ObjectMapper();
