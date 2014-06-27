@@ -17,5 +17,5 @@ public interface EntityEndpoints
     <T> T update(EntityData<T> entityData, UUID id, String type);
     void delete(UUID id, String type);
 
-	void initialize(URL url, String accessToken);
+	void initialize(String url, String accessToken);
 }

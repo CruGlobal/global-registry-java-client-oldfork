@@ -44,9 +44,9 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
 	@Override
-	public void initialize(URL url, String accessToken)
+	public void initialize(String url, String accessToken)
 	{
-		this.apiUrl = url.toString();
+		this.apiUrl = url;
 		this.accessToken = accessToken;
 	}
 
