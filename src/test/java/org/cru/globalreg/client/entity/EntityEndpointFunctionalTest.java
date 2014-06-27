@@ -2,8 +2,9 @@ package org.cru.globalreg.client.entity;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.cru.globalreg.client.Filter;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 import org.testng.Assert;
@@ -15,7 +16,7 @@ import org.testng.annotations.Test;
 
 public class EntityEndpointFunctionalTest
 {
-    static final String ACCESS_TOKEN = "";
+	private final String ACCESS_TOKEN = "";
 
     private EntityEndpoints getApi()
     {
@@ -128,8 +129,10 @@ public class EntityEndpointFunctionalTest
                 .getResource("testPost.json"));
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setPropertyNamingStrategy(new GlobalRegistryApiNamingStrategy());
 
-        return mapper.readValue(jsonNode.path("person"), Person.class);
+		mapper.setPropertyNamingStrategy(new GlobalRegistryApiNamingStrategy());
+
+		return mapper.treeToValue(jsonNode.path("person"), Person.class);
+
     }
 }

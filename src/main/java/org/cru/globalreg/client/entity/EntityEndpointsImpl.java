@@ -10,11 +10,12 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Throwables;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+
 import org.cru.globalreg.client.Filter;
 import org.cru.globalreg.client.JsonConverter;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
@@ -38,7 +39,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.setPropertyNamingStrategy(new GlobalRegistryApiNamingStrategy());
-        this.objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public final void setApiUrl(final String apiUrl)

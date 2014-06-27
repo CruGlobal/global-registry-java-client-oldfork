@@ -1,12 +1,12 @@
 package org.cru.globalreg.client.entitytypes;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
-import org.codehaus.jackson.type.TypeReference;
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 
 import javax.ws.rs.WebApplicationException;
@@ -24,8 +24,8 @@ import java.util.Set;
 public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
 {
     private String apiUrl = new String("http://gr.stage.uscm.org");
-    private String accessToken;
-    final private ObjectMapper objectMapper;
+	private String accessToken;
+	final private ObjectMapper objectMapper;
 
     final private static Set<Integer> statusesWithEntity  = Sets.newHashSet(200, 201);
     final private static Set<Integer> statusWithoutEntity = Sets.newHashSet(204);
@@ -39,7 +39,7 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
     {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.setPropertyNamingStrategy(new GlobalRegistryApiNamingStrategy());
-        this.objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
@@ -55,8 +55,7 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
 
         try
         {
-            JsonNode jsonResults = objectMapper.readTree(response.readEntity(String.class));
-            return objectMapper.readValue(jsonResults.path("entity_types"), new TypeReference<List<EntityType>>(){});
+			return objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<EntityType>>(){});
         }
         catch(Exception e)
         {
@@ -78,9 +77,9 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
 
         try
         {
-            JsonNode jsonResults = objectMapper.readTree(response.readEntity(String.class));
-            return objectMapper.readValue(jsonResults, EntityType.class);
-        }
+			return objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<EntityType>>(){});
+
+		}
         catch(Exception e)
         {
             Throwables.propagate(e);
@@ -114,9 +113,6 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
     private <T> JsonNode prepareData(T data, String entityType)
     {
         JsonNode jsonData = objectMapper.valueToTree(data);
-//
-//        final ObjectNode entity = objectMapper.createObjectNode();
-//        entity.put(entityType, jsonData);
 
         final ObjectNode root = objectMapper.createObjectNode();
         root.put("entity_type", jsonData);

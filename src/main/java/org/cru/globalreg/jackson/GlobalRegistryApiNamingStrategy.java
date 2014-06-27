@@ -1,10 +1,10 @@
 package org.cru.globalreg.jackson;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.google.common.base.CaseFormat;
-import org.codehaus.jackson.map.MapperConfig;
-import org.codehaus.jackson.map.PropertyNamingStrategy;
-import org.codehaus.jackson.map.introspect.AnnotatedField;
-import org.codehaus.jackson.map.introspect.AnnotatedMethod;
 
 public class GlobalRegistryApiNamingStrategy extends PropertyNamingStrategy
 {

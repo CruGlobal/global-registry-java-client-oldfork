@@ -1,10 +1,10 @@
 package org.cru.globalreg.client;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
+
 import org.cru.globalreg.jackson.GlobalRegistryApiNamingStrategy;
 
 /**
@@ -41,7 +41,7 @@ public class JsonConverter
     {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(new GlobalRegistryApiNamingStrategy());
-        objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         return objectMapper;
     }
