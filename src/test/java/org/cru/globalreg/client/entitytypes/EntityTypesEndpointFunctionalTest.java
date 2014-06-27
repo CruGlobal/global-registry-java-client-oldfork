@@ -4,6 +4,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 2/25/14.
@@ -48,7 +49,7 @@ public class EntityTypesEndpointFunctionalTest
         entityType = new EntityType();
         entityType.setName("favorite_food");
         entityType.setFieldType("string");
-        entityType.setParentId(1);
+        entityType.setParentId(UUID.fromString("d0d86c43-311e-476f-81a5-9877aae4b4d8"));
 
         return entityType;
     }

@@ -1,25 +1,26 @@
 package org.cru.globalreg.client.entitytypes;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 2/25/14.
  */
 public class EntityType
 {
-    private Integer id;
+    private UUID id;
     private String name;
     private String fieldType;
-    private Integer parentId;
+    private UUID parentId;
 
     private List<EntityType> fields;
 
-    public Integer getId()
+    public UUID getId()
     {
         return id;
     }
 
-    public void setId(Integer id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
@@ -44,12 +45,12 @@ public class EntityType
         this.fieldType = fieldType;
     }
 
-    public Integer getParentId()
+    public UUID getParentId()
     {
         return parentId;
     }
 
-    public void setParentId(Integer parentId)
+    public void setParentId(UUID parentId)
     {
         this.parentId = parentId;
     }

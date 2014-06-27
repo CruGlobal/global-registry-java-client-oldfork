@@ -59,7 +59,9 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
 
         try
         {
-			return objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<EntityType>>(){});
+			JsonNode entityTypeObjectNode = objectMapper.readTree(response.readEntity(String.class));
+			JsonNode entityTypeListNode = entityTypeObjectNode.path("entity_types");
+			return objectMapper.convertValue(entityTypeListNode, new TypeReference<List<EntityType>>(){});
         }
         catch(Exception e)
         {
@@ -81,8 +83,7 @@ public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
 
         try
         {
-			return objectMapper.readValue(response.readEntity(String.class), new TypeReference<List<EntityType>>(){});
-
+			return objectMapper.readValue(response.readEntity(String.class), EntityType.class);
 		}
         catch(Exception e)
         {
