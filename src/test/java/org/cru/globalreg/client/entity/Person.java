@@ -3,6 +3,8 @@ package org.cru.globalreg.client.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.UUID;
+
 /**
  * Created by ryancarlson on 2/25/14.
  */
@@ -10,10 +12,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Person
 {
 
+	private UUID id;
     private String firstName;
     private String lastName;
     private String campus;
-    private Integer id;
+	private UUID clientIntegrationId;
 
     public String getFirstName()
     {
@@ -45,13 +48,23 @@ public class Person
         this.campus = campus;
     }
 
-    public Integer getId()
-    {
-        return id;
-    }
+	public UUID getId()
+	{
+		return id;
+	}
 
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
+	public void setId(UUID id)
+	{
+		this.id = id;
+	}
+
+	public UUID getClientIntegrationId()
+	{
+		return clientIntegrationId;
+	}
+
+	public void setClientIntegrationId(UUID clientIntegrationId)
+	{
+		this.clientIntegrationId = clientIntegrationId;
+	}
 }

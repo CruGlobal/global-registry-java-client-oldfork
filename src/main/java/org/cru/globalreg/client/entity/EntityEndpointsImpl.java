@@ -1,6 +1,7 @@
 package org.cru.globalreg.client.entity;
 
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
@@ -107,7 +108,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public  <T> T get(EntityClass<T> entityClass, Integer id, String type)
+    public  <T> T get(EntityClass<T> entityClass, UUID id, String type)
     {
         Response response = webTarget()
                 .path("/" + id)
@@ -144,7 +145,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public  <T> T update(EntityData<T> entityData, Integer id, String type)
+    public  <T> T update(EntityData<T> entityData, UUID id, String type)
     {
         Response response = webTarget()
                 .path("/" + id)
@@ -162,7 +163,7 @@ public class EntityEndpointsImpl implements EntityEndpoints
     }
 
     @Override
-    public void delete(Integer id, String type)
+    public void delete(UUID id, String type)
     {
         Response response = webTarget()
                 .path("/" + id)

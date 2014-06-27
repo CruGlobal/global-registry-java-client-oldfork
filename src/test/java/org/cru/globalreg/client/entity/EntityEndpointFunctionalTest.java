@@ -1,6 +1,7 @@
 package org.cru.globalreg.client.entity;
 
 import java.io.IOException;
+import java.util.UUID;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,6 +23,7 @@ public class EntityEndpointFunctionalTest
     {
         final EntityEndpointsImpl api = new EntityEndpointsImpl();
         api.setAccessToken(ACCESS_TOKEN);
+		api.setApiUrl("http://gr.stage.uscm.org");
         return api;
     }
 
@@ -30,11 +32,11 @@ public class EntityEndpointFunctionalTest
     {
         EntityEndpoints entityApi = this.getApi();
 
-        Person entity = entityApi.get(new EntityClass<Person>(Person.class), 20972, "person");
+        Person entity = entityApi.get(new EntityClass<Person>(Person.class), UUID.fromString("8a8a708e-fe2b-11e3-97a6-12725f8f377c"), "person");
 
         Assert.assertNotNull(entity);
 
-        Assert.assertEquals(entity.getFirstName(), "Ferson");
+        Assert.assertEquals(entity.getFirstName(), "Ryan");
     }
 
     @Test
@@ -43,11 +45,11 @@ public class EntityEndpointFunctionalTest
         EntityEndpoints entityApi = this.getApi();
 
         EntitySearchResponse<Person> response = entityApi.search(new EntityClass<Person>(Person.class), "person",
-                new Filter().path("last_name").value("Vellacott"));
+                new Filter().path("last_name").value("TestUser Carlson"));
 
         Assert.assertNotNull(response);
 
-        Assert.assertEquals(response.get(0).getLastName(), "Vellacott");
+        Assert.assertEquals(response.get(0).getLastName(), "TestUser Carlson");
     }
 
     @Test
@@ -59,19 +61,9 @@ public class EntityEndpointFunctionalTest
 
         Person postResponseData = entityApi.create(new EntityData<Person>(Person.class, testData), "person");
 
-        try
-        {
-            Assert.assertNotNull(postResponseData);
+		Assert.assertNotNull(postResponseData);
 
-            Assert.assertEquals(postResponseData.getFirstName(), "Ryan");
-            Assert.assertEquals(postResponseData.getLastName(), "TestUser Carlson");
-            Assert.assertEquals(postResponseData.getCampus(), "Ohio University");
-            Assert.assertNotNull(postResponseData.getId());
-        }
-        finally
-        {
-            entityApi.delete(postResponseData.getId(), "person");
-        }
+		Assert.assertEquals(UUID.fromString("8a8a708e-fe2b-11e3-97a6-12725f8f377c"), postResponseData.getId());
     }
 
     @Test
@@ -83,35 +75,24 @@ public class EntityEndpointFunctionalTest
         the API will just updated it, thankfully not creating a dupe*/
         Person testData = getTestJson();
 
-        Person postResponseData = entityApi
-                .create(new EntityData<Person>(Person.class, testData), "person");
+		Person postResponseData = entityApi
+				.create(new EntityData<Person>(Person.class, testData), "person");
 
-        try
-        {
-            Integer currentId = postResponseData.getId();
+		UUID currentId = postResponseData.getId();
 
             /*get the same JSON, but provide a new campus name*/
-            Person updatedTestData = getTestJson();
-            updatedTestData.setCampus("Bowling Green");
-            updatedTestData.setId(currentId);
+		Person updatedTestData = getTestJson();
+		updatedTestData.setCampus("Bowling Green");
+		updatedTestData.setId(currentId);
             /*execute the update*/
 
-            Person putResponseData = entityApi.update(
-                    new EntityData<Person>(Person.class, updatedTestData), currentId, "person");
+		Person putResponseData = entityApi.update(
+				new EntityData<Person>(Person.class, updatedTestData), currentId, "person");
 
-            Assert.assertNotNull(putResponseData);
+		Assert.assertNotNull(putResponseData);
 
-            Assert.assertEquals(putResponseData.getFirstName(), "Ryan");
-            Assert.assertEquals(putResponseData.getLastName(), "TestUser Carlson");
-            Assert.assertEquals(putResponseData.getCampus(), "Bowling Green");
-            Assert.assertEquals(putResponseData.getId(), currentId);
-        }
-        finally
-        {
-            entityApi.delete(postResponseData.getId(), "person");
-        }
-
-    }
+		Assert.assertEquals(UUID.fromString("8a8a708e-fe2b-11e3-97a6-12725f8f377c"), postResponseData.getId());
+	}
 
     @Test
     public void testDeleteEndpoint()
