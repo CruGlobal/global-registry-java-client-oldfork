@@ -29,8 +29,8 @@ import com.google.common.collect.Sets;
  */
 public class EntityEndpointsImpl implements EntityEndpoints
 {
-    private String apiUrl;
-    private String accessToken;
+    String apiUrl;
+    String accessToken;
     final private ObjectMapper objectMapper;
 
     final private static Set<Integer> statusesWithEntity  = Sets.newHashSet(200,201);

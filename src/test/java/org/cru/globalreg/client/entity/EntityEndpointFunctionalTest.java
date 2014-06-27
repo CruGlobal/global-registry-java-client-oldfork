@@ -22,8 +22,8 @@ public class EntityEndpointFunctionalTest
     private EntityEndpoints getApi()
     {
         final EntityEndpointsImpl api = new EntityEndpointsImpl();
-        api.setAccessToken(ACCESS_TOKEN);
-		api.setApiUrl("http://gr.stage.uscm.org");
+        api.accessToken = ACCESS_TOKEN;
+		api.apiUrl = "http://gr.stage.uscm.org";
         return api;
     }
 
