@@ -27,8 +27,7 @@ import com.google.common.collect.Sets;
  */
 public class EntityEndpointsImpl implements EntityEndpoints
 {
-    //TODO: this should be read/injected from default.properties
-    private String apiUrl = new String("http://gr.stage.uscm.org");
+    private String apiUrl;
     private String accessToken;
     final private ObjectMapper objectMapper;
 

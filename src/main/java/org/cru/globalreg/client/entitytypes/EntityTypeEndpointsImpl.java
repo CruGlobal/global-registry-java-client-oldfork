@@ -23,13 +23,17 @@ import java.util.Set;
  */
 public class EntityTypeEndpointsImpl implements EntityTypeEndpoints
 {
-    private String apiUrl = new String("http://gr.stage.uscm.org");
+    private String apiUrl;
 	private String accessToken;
 	final private ObjectMapper objectMapper;
 
     final private static Set<Integer> statusesWithEntity  = Sets.newHashSet(200, 201);
     final private static Set<Integer> statusWithoutEntity = Sets.newHashSet(204);
 
+	public final void setApiUrl(final String apiUrl)
+	{
+		this.apiUrl = apiUrl;
+	}
     public final void setAccessToken(final String accessToken)
     {
         this.accessToken = accessToken;
