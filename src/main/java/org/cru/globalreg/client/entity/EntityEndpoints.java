@@ -2,6 +2,7 @@ package org.cru.globalreg.client.entity;
 
 import org.cru.globalreg.client.Filter;
 
+import java.net.URL;
 import java.util.UUID;
 
 /**
@@ -15,4 +16,6 @@ public interface EntityEndpoints
     <T> T create(EntityData<T> entityData, String type);
     <T> T update(EntityData<T> entityData, UUID id, String type);
     void delete(UUID id, String type);
+
+	void initialize(URL url, String accessToken);
 }

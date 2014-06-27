@@ -1,5 +1,6 @@
 package org.cru.globalreg.client.entity;
 
+import java.net.URL;
 import java.util.Set;
 import java.util.UUID;
 
@@ -42,17 +43,14 @@ public class EntityEndpointsImpl implements EntityEndpoints
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public final void setApiUrl(final String apiUrl)
-    {
-        this.apiUrl = apiUrl;
-    }
+	@Override
+	public void initialize(URL url, String accessToken)
+	{
+		this.apiUrl = url.toString();
+		this.accessToken = accessToken;
+	}
 
-    public final void setAccessToken(final String accessToken)
-    {
-        this.accessToken = accessToken;
-    }
-
-    @Override
+	@Override
     public <T> EntitySearchResponse<T> search(EntityClass<T> entityClass, String type, final Filter... filters)
     {
         return this.search(entityClass, type, 1, filters);
@@ -224,8 +222,6 @@ public class EntityEndpointsImpl implements EntityEndpoints
 
         else throw new IllegalStateException("Unexpected status: " + response.getStatus() + " was returned.");
     }
-
-
 
     private void handleErrorResponses(Response response)
     {
